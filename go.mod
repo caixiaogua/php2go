@@ -1,4 +1,4 @@
-module github.com/syyongx/php2go
+module github.com/caixiaogua/php2go
 
 go 1.12
 
