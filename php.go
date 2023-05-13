@@ -36,17 +36,19 @@ import (
 	"unicode/utf8"
 )
 
+type PHP struct {}
+
 //////////// Date/Time Functions ////////////
 
 // Time time()
-func Time() int64 {
+func (PHP) Time() int64 {
 	return time.Now().Unix()
 }
 
 // Strtotime strtotime()
 // Strtotime("02/01/2006 15:04:05", "02/01/2016 15:04:05") == 1451747045
 // Strtotime("3 04 PM", "8 41 PM") == -62167144740
-func Strtotime(format, strtime string) (int64, error) {
+func (PHP) Strtotime(format, strtime string) (int64, error) {
 	t, err := time.Parse(format, strtime)
 	if err != nil {
 		return 0, err
@@ -57,13 +59,13 @@ func Strtotime(format, strtime string) (int64, error) {
 // Date date()
 // Date("02/01/2006 15:04:05 PM", 1524799394)
 // Note: the behavior is inconsistent with php's date function
-func Date(format string, timestamp int64) string {
+func (PHP) Date(format string, timestamp int64) string {
 	return time.Unix(timestamp, 0).Format(format)
 }
 
 // Checkdate checkdate()
 // Validate a Gregorian date
-func Checkdate(month, day, year int) bool {
+func (PHP) Checkdate(month, day, year int) bool {
 	if month < 1 || month > 12 || day < 1 || day > 31 || year < 1 || year > 32767 {
 		return false
 	}
@@ -87,19 +89,19 @@ func Checkdate(month, day, year int) bool {
 }
 
 // Sleep sleep()
-func Sleep(t int64) {
+func (PHP) Sleep(t int64) {
 	time.Sleep(time.Duration(t) * time.Second)
 }
 
 // Usleep usleep()
-func Usleep(t int64) {
+func (PHP) Usleep(t int64) {
 	time.Sleep(time.Duration(t) * time.Microsecond)
 }
 
 //////////// String Functions ////////////
 
 // Strpos strpos()
-func Strpos(haystack, needle string, offset int) int {
+func (PHP) Strpos(haystack, needle string, offset int) int {
 	length := len(haystack)
 	if length == 0 || offset > length || -offset > length {
 		return -1
@@ -116,7 +118,7 @@ func Strpos(haystack, needle string, offset int) int {
 }
 
 // Stripos stripos()
-func Stripos(haystack, needle string, offset int) int {
+func (PHP) Stripos(haystack, needle string, offset int) int {
 	length := len(haystack)
 	if length == 0 || offset > length || -offset > length {
 		return -1
@@ -134,7 +136,7 @@ func Stripos(haystack, needle string, offset int) int {
 }
 
 // Strrpos strrpos()
-func Strrpos(haystack, needle string, offset int) int {
+func (PHP) Strrpos(haystack, needle string, offset int) int {
 	pos, length := 0, len(haystack)
 	if length == 0 || offset > length || -offset > length {
 		return -1
@@ -153,7 +155,7 @@ func Strrpos(haystack, needle string, offset int) int {
 }
 
 // Strripos strripos()
-func Strripos(haystack, needle string, offset int) int {
+func (PHP) Strripos(haystack, needle string, offset int) int {
 	pos, length := 0, len(haystack)
 	if length == 0 || offset > length || -offset > length {
 		return -1
@@ -172,22 +174,22 @@ func Strripos(haystack, needle string, offset int) int {
 }
 
 // StrReplace str_replace()
-func StrReplace(search, replace, subject string, count int) string {
+func (PHP) StrReplace(search, replace, subject string, count int) string {
 	return strings.Replace(subject, search, replace, count)
 }
 
 // Strtoupper strtoupper()
-func Strtoupper(str string) string {
+func (PHP) Strtoupper(str string) string {
 	return strings.ToUpper(str)
 }
 
 // Strtolower strtolower()
-func Strtolower(str string) string {
+func (PHP) Strtolower(str string) string {
 	return strings.ToLower(str)
 }
 
 // Ucfirst ucfirst()
-func Ucfirst(str string) string {
+func (PHP) Ucfirst(str string) string {
 	for _, v := range str {
 		u := string(unicode.ToUpper(v))
 		return u + str[len(u):]
@@ -196,7 +198,7 @@ func Ucfirst(str string) string {
 }
 
 // Lcfirst lcfirst()
-func Lcfirst(str string) string {
+func (PHP) Lcfirst(str string) string {
 	for _, v := range str {
 		u := string(unicode.ToLower(v))
 		return u + str[len(u):]
@@ -205,7 +207,7 @@ func Lcfirst(str string) string {
 }
 
 // Ucwords ucwords()
-func Ucwords(str string) string {
+func (PHP) Ucwords(str string) string {
 	isSeparator := func(r rune) bool {
 		if r <= 0x7F {
 			switch {
@@ -239,7 +241,7 @@ func Ucwords(str string) string {
 }
 
 // Substr substr()
-func Substr(str string, start uint, length int) string {
+func (PHP) Substr(str string, start uint, length int) string {
 	if length < -1 {
 		return str
 	}
@@ -257,7 +259,7 @@ func Substr(str string, start uint, length int) string {
 }
 
 // Strrev strrev()
-func Strrev(str string) string {
+func (PHP) Strrev(str string) string {
 	runes := []rune(str)
 	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
 		runes[i], runes[j] = runes[j], runes[i]
@@ -274,7 +276,7 @@ func Strrev(str string) string {
 // f[][]=m&f[][]=n -> map[f:[map[]]] // Currently does not support nested slice.
 // f=m&f[a]=n -> error // This is not the same as PHP.
 // a .[[b=c -> map[a___[b:c]
-func ParseStr(encodedString string, result map[string]interface{}) error {
+func (PHP) ParseStr(encodedString string, result map[string]interface{}) error {
 	// build nested map.
 	var build func(map[string]interface{}, []string, interface{}) error
 
@@ -418,7 +420,7 @@ func ParseStr(encodedString string, result map[string]interface{}) error {
 // decimals: Sets the number of decimal points.
 // decPoint: Sets the separator for the decimal point.
 // thousandsSep: Sets the thousands' separator.
-func NumberFormat(number float64, decimals uint, decPoint, thousandsSep string) string {
+func (PHP) NumberFormat(number float64, decimals uint, decPoint, thousandsSep string) string {
 	neg := false
 	if number < 0 {
 		number = -number
@@ -461,7 +463,7 @@ func NumberFormat(number float64, decimals uint, decPoint, thousandsSep string) 
 }
 
 // ChunkSplit chunk_split()
-func ChunkSplit(body string, chunklen uint, end string) string {
+func (PHP) ChunkSplit(body string, chunklen uint, end string) string {
 	if end == "" {
 		end = "\r\n"
 	}
@@ -484,12 +486,12 @@ func ChunkSplit(body string, chunklen uint, end string) string {
 }
 
 // StrWordCount str_word_count()
-func StrWordCount(str string) []string {
+func (PHP) StrWordCount(str string) []string {
 	return strings.Fields(str)
 }
 
 // Wordwrap wordwrap()
-func Wordwrap(str string, width uint, br string, cut bool) string {
+func (PHP) Wordwrap(str string, width uint, br string, cut bool) string {
 	strlen := len(str)
 	brlen := len(br)
 	linelen := int(width)
@@ -539,17 +541,17 @@ func Wordwrap(str string, width uint, br string, cut bool) string {
 }
 
 // Strlen strlen()
-func Strlen(str string) int {
+func (PHP) Strlen(str string) int {
 	return len(str)
 }
 
 // StrRepeat str_repeat()
-func StrRepeat(input string, multiplier int) string {
+func (PHP) StrRepeat(input string, multiplier int) string {
 	return strings.Repeat(input, multiplier)
 }
 
 // Strstr strstr()
-func Strstr(haystack string, needle string) string {
+func (PHP) Strstr(haystack string, needle string) string {
 	if needle == "" {
 		return ""
 	}
@@ -566,7 +568,7 @@ func Strstr(haystack string, needle string) string {
 // Strtr("baab", map[string]string{"ab": "01"}) will return "ba01"
 // If the parameter length is 2, type is: string, string
 // Strtr("baab", "ab", "01") will return "1001", a => 0; b => 1.
-func Strtr(haystack string, params ...interface{}) string {
+func (PHP) Strtr(haystack string, params ...interface{}) string {
 	ac := len(params)
 	if ac == 1 {
 		pairs := params[0].(map[string]string)
@@ -627,7 +629,7 @@ func Strtr(haystack string, params ...interface{}) string {
 }
 
 // StrShuffle str_shuffle()
-func StrShuffle(str string) string {
+func (PHP) StrShuffle(str string) string {
 	runes := []rune(str)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	s := make([]rune, len(runes))
@@ -638,7 +640,7 @@ func StrShuffle(str string) string {
 }
 
 // Trim trim()
-func Trim(str string, characterMask ...string) string {
+func (PHP) Trim(str string, characterMask ...string) string {
 	if len(characterMask) == 0 {
 		return strings.TrimSpace(str)
 	}
@@ -646,7 +648,7 @@ func Trim(str string, characterMask ...string) string {
 }
 
 // Ltrim ltrim()
-func Ltrim(str string, characterMask ...string) string {
+func (PHP) Ltrim(str string, characterMask ...string) string {
 	if len(characterMask) == 0 {
 		return strings.TrimLeftFunc(str, unicode.IsSpace)
 	}
@@ -654,7 +656,7 @@ func Ltrim(str string, characterMask ...string) string {
 }
 
 // Rtrim rtrim()
-func Rtrim(str string, characterMask ...string) string {
+func (PHP) Rtrim(str string, characterMask ...string) string {
 	if len(characterMask) == 0 {
 		return strings.TrimRightFunc(str, unicode.IsSpace)
 	}
@@ -662,24 +664,24 @@ func Rtrim(str string, characterMask ...string) string {
 }
 
 // Explode explode()
-func Explode(delimiter, str string) []string {
+func (PHP) Explode(delimiter, str string) []string {
 	return strings.Split(str, delimiter)
 }
 
 // Chr chr()
-func Chr(ascii int) string {
+func (PHP) Chr(ascii int) string {
 	return string(rune(ascii))
 }
 
 // Ord ord()
-func Ord(char string) int {
+func (PHP) Ord(char string) int {
 	r, _ := utf8.DecodeRune([]byte(char))
 	return int(r)
 }
 
 // Nl2br nl2br()
 // \n\r, \r\n, \r, \n
-func Nl2br(str string, isXhtml bool) string {
+func (PHP) Nl2br(str string, isXhtml bool) string {
 	r, n, runes := '\r', '\n', []rune(str)
 	var br []byte
 	if isXhtml {
@@ -711,17 +713,17 @@ func Nl2br(str string, isXhtml bool) string {
 }
 
 // JSONDecode json_decode()
-func JSONDecode(data []byte, val interface{}) error {
+func (PHP) JSONDecode(data []byte, val interface{}) error {
 	return json.Unmarshal(data, val)
 }
 
 // JSONEncode json_encode()
-func JSONEncode(val interface{}) ([]byte, error) {
+func (PHP) JSONEncode(val interface{}) ([]byte, error) {
 	return json.Marshal(val)
 }
 
 // Addslashes addslashes()
-func Addslashes(str string) string {
+func (PHP) Addslashes(str string) string {
 	var buf bytes.Buffer
 	for _, char := range str {
 		switch char {
@@ -734,7 +736,7 @@ func Addslashes(str string) string {
 }
 
 // Stripslashes stripslashes()
-func Stripslashes(str string) string {
+func (PHP) Stripslashes(str string) string {
 	var buf bytes.Buffer
 	l, skip := len(str), false
 	for i, char := range str {
@@ -752,7 +754,7 @@ func Stripslashes(str string) string {
 }
 
 // Quotemeta quotemeta()
-func Quotemeta(str string) string {
+func (PHP) Quotemeta(str string) string {
 	var buf bytes.Buffer
 	for _, char := range str {
 		switch char {
@@ -765,24 +767,24 @@ func Quotemeta(str string) string {
 }
 
 // Htmlentities htmlentities()
-func Htmlentities(str string) string {
+func (PHP) Htmlentities(str string) string {
 	return html.EscapeString(str)
 }
 
 // HTMLEntityDecode html_entity_decode()
-func HTMLEntityDecode(str string) string {
+func (PHP) HTMLEntityDecode(str string) string {
 	return html.UnescapeString(str)
 }
 
 // Md5 md5()
-func Md5(str string) string {
+func (PHP) Md5(str string) string {
 	hash := md5.New()
 	hash.Write([]byte(str))
 	return hex.EncodeToString(hash.Sum(nil))
 }
 
 // Md5File md5_file()
-func Md5File(path string) (string, error) {
+func (PHP) Md5File(path string) (string, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return "", err
@@ -819,14 +821,14 @@ func Md5File(path string) (string, error) {
 }
 
 // Sha1 sha1()
-func Sha1(str string) string {
+func (PHP) Sha1(str string) string {
 	hash := sha1.New()
 	hash.Write([]byte(str))
 	return hex.EncodeToString(hash.Sum(nil))
 }
 
 // Sha1File sha1_file()
-func Sha1File(path string) (string, error) {
+func (PHP) Sha1File(path string) (string, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
@@ -837,7 +839,7 @@ func Sha1File(path string) (string, error) {
 }
 
 // Crc32 crc32()
-func Crc32(str string) uint32 {
+func (PHP) Crc32(str string) uint32 {
 	return crc32.ChecksumIEEE([]byte(str))
 }
 
@@ -845,7 +847,7 @@ func Crc32(str string) uint32 {
 // costIns: Defines the cost of insertion.
 // costRep: Defines the cost of replacement.
 // costDel: Defines the cost of deletion.
-func Levenshtein(str1, str2 string, costIns, costRep, costDel int) int {
+func (PHP) Levenshtein(str1, str2 string, costIns, costRep, costDel int) int {
 	var maxLen = 255
 	l1 := len(str1)
 	l2 := len(str2)
@@ -894,7 +896,7 @@ func Levenshtein(str1, str2 string, costIns, costRep, costDel int) int {
 }
 
 // SimilarText similar_text()
-func SimilarText(first, second string, percent *float64) int {
+func (PHP) SimilarText(first, second string, percent *float64) int {
 	var similarText func(string, string, int, int) int
 	similarText = func(str1, str2 string, len1, len2 int) int {
 		var sum, max int
@@ -940,7 +942,7 @@ func SimilarText(first, second string, percent *float64) int {
 
 // Soundex soundex()
 // Calculate the soundex key of a string.
-func Soundex(str string) string {
+func (PHP) Soundex(str string) string {
 	if str == "" {
 		panic("str: cannot be an empty string")
 	}
@@ -1000,13 +1002,13 @@ func Soundex(str string) string {
 //////////// Multibyte String Functions ////////////
 
 // MbStrlen mb_strlen()
-func MbStrlen(str string) int {
+func (PHP) MbStrlen(str string) int {
 	return utf8.RuneCountInString(str)
 }
 
 // MbStrtoupper mb_strtoupper()
 // Make a string uppercase
-func MbStrtoupper(str string) string {
+func (PHP) MbStrtoupper(str string) string {
 	return strings.ToUpper(cases.Fold().String(str))
 }
 
@@ -1015,7 +1017,7 @@ func MbStrtoupper(str string) string {
 // ParseURL parse_url()
 // Parse a URL and return its components
 // -1: all; 1: scheme; 2: host; 4: port; 8: user; 16: pass; 32: path; 64: query; 128: fragment
-func ParseURL(str string, component int) (map[string]string, error) {
+func (PHP) ParseURL(str string, component int) (map[string]string, error) {
 	u, err := url.Parse(str)
 	if err != nil {
 		return nil, err
@@ -1052,37 +1054,37 @@ func ParseURL(str string, component int) (map[string]string, error) {
 }
 
 // URLEncode urlencode()
-func URLEncode(str string) string {
+func (PHP) URLEncode(str string) string {
 	return url.QueryEscape(str)
 }
 
 // URLDecode urldecode()
-func URLDecode(str string) (string, error) {
+func (PHP) URLDecode(str string) (string, error) {
 	return url.QueryUnescape(str)
 }
 
 // Rawurlencode rawurlencode()
-func Rawurlencode(str string) string {
+func (PHP) Rawurlencode(str string) string {
 	return strings.Replace(url.QueryEscape(str), "+", "%20", -1)
 }
 
 // Rawurldecode rawurldecode()
-func Rawurldecode(str string) (string, error) {
+func (PHP) Rawurldecode(str string) (string, error) {
 	return url.QueryUnescape(strings.Replace(str, "%20", "+", -1))
 }
 
 // HTTPBuildQuery http_build_query()
-func HTTPBuildQuery(queryData url.Values) string {
+func (PHP) HTTPBuildQuery(queryData url.Values) string {
 	return queryData.Encode()
 }
 
 // Base64Encode base64_encode()
-func Base64Encode(str string) string {
+func (PHP) Base64Encode(str string) string {
 	return base64.StdEncoding.EncodeToString([]byte(str))
 }
 
 // Base64Decode base64_decode()
-func Base64Decode(str string) (string, error) {
+func (PHP) Base64Decode(str string) (string, error) {
 	switch len(str) % 4 {
 	case 2:
 		str += "=="
@@ -1100,7 +1102,7 @@ func Base64Decode(str string) (string, error) {
 //////////// Array(Slice/Map) Functions ////////////
 
 // ArrayFill array_fill()
-func ArrayFill(startIndex int, num uint, value interface{}) map[int]interface{} {
+func (PHP) ArrayFill(startIndex int, num uint, value interface{}) map[int]interface{} {
 	m := make(map[int]interface{})
 	var i uint
 	for i = 0; i < num; i++ {
@@ -1111,7 +1113,7 @@ func ArrayFill(startIndex int, num uint, value interface{}) map[int]interface{} 
 }
 
 // ArrayFlip array_flip()
-func ArrayFlip(m map[interface{}]interface{}) map[interface{}]interface{} {
+func (PHP) ArrayFlip(m map[interface{}]interface{}) map[interface{}]interface{} {
 	n := make(map[interface{}]interface{})
 	for i, v := range m {
 		n[v] = i
@@ -1120,7 +1122,7 @@ func ArrayFlip(m map[interface{}]interface{}) map[interface{}]interface{} {
 }
 
 // ArrayKeys array_keys()
-func ArrayKeys(elements map[interface{}]interface{}) []interface{} {
+func (PHP) ArrayKeys(elements map[interface{}]interface{}) []interface{} {
 	i, keys := 0, make([]interface{}, len(elements))
 	for key := range elements {
 		keys[i] = key
@@ -1130,7 +1132,7 @@ func ArrayKeys(elements map[interface{}]interface{}) []interface{} {
 }
 
 // ArrayValues array_values()
-func ArrayValues(elements map[interface{}]interface{}) []interface{} {
+func (PHP) ArrayValues(elements map[interface{}]interface{}) []interface{} {
 	i, vals := 0, make([]interface{}, len(elements))
 	for _, val := range elements {
 		vals[i] = val
@@ -1140,7 +1142,7 @@ func ArrayValues(elements map[interface{}]interface{}) []interface{} {
 }
 
 // ArrayMerge array_merge()
-func ArrayMerge(ss ...[]interface{}) []interface{} {
+func (PHP) ArrayMerge(ss ...[]interface{}) []interface{} {
 	n := 0
 	for _, v := range ss {
 		n += len(v)
@@ -1153,7 +1155,7 @@ func ArrayMerge(ss ...[]interface{}) []interface{} {
 }
 
 // ArrayChunk array_chunk()
-func ArrayChunk(s []interface{}, size int) [][]interface{} {
+func (PHP) ArrayChunk(s []interface{}, size int) [][]interface{} {
 	if size < 1 {
 		panic("size: cannot be less than 1")
 	}
@@ -1172,7 +1174,7 @@ func ArrayChunk(s []interface{}, size int) [][]interface{} {
 }
 
 // ArrayPad array_pad()
-func ArrayPad(s []interface{}, size int, val interface{}) []interface{} {
+func (PHP) ArrayPad(s []interface{}, size int, val interface{}) []interface{} {
 	if size == 0 || (size > 0 && size < len(s)) || (size < 0 && size > -len(s)) {
 		return s
 	}
@@ -1192,7 +1194,7 @@ func ArrayPad(s []interface{}, size int, val interface{}) []interface{} {
 }
 
 // ArraySlice array_slice()
-func ArraySlice(s []interface{}, offset, length uint) []interface{} {
+func (PHP) ArraySlice(s []interface{}, offset, length uint) []interface{} {
 	if offset > uint(len(s)) {
 		panic("offset: the offset is less than the length of s")
 	}
@@ -1204,7 +1206,7 @@ func ArraySlice(s []interface{}, offset, length uint) []interface{} {
 }
 
 // ArrayRand array_rand()
-func ArrayRand(elements []interface{}) []interface{} {
+func (PHP) ArrayRand(elements []interface{}) []interface{} {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	n := make([]interface{}, len(elements))
 	for i, v := range r.Perm(len(elements)) {
@@ -1214,7 +1216,7 @@ func ArrayRand(elements []interface{}) []interface{} {
 }
 
 // ArrayColumn array_column()
-func ArrayColumn(input map[string]map[string]interface{}, columnKey string) []interface{} {
+func (PHP) ArrayColumn(input map[string]map[string]interface{}, columnKey string) []interface{} {
 	columns := make([]interface{}, 0, len(input))
 	for _, val := range input {
 		if v, ok := val[columnKey]; ok {
@@ -1226,14 +1228,14 @@ func ArrayColumn(input map[string]map[string]interface{}, columnKey string) []in
 
 // ArrayPush array_push()
 // Push one or more elements onto the end of slice
-func ArrayPush(s *[]interface{}, elements ...interface{}) int {
+func (PHP) ArrayPush(s *[]interface{}, elements ...interface{}) int {
 	*s = append(*s, elements...)
 	return len(*s)
 }
 
 // ArrayPop array_pop()
 // Pop the element off the end of slice
-func ArrayPop(s *[]interface{}) interface{} {
+func (PHP) ArrayPop(s *[]interface{}) interface{} {
 	if len(*s) == 0 {
 		return nil
 	}
@@ -1245,14 +1247,14 @@ func ArrayPop(s *[]interface{}) interface{} {
 
 // ArrayUnshift array_unshift()
 // Prepend one or more elements to the beginning of a slice
-func ArrayUnshift(s *[]interface{}, elements ...interface{}) int {
+func (PHP) ArrayUnshift(s *[]interface{}, elements ...interface{}) int {
 	*s = append(elements, *s...)
 	return len(*s)
 }
 
 // ArrayShift array_shift()
 // Shift an element off the beginning of slice
-func ArrayShift(s *[]interface{}) interface{} {
+func (PHP) ArrayShift(s *[]interface{}) interface{} {
 	if len(*s) == 0 {
 		return nil
 	}
@@ -1262,13 +1264,13 @@ func ArrayShift(s *[]interface{}) interface{} {
 }
 
 // ArrayKeyExists array_key_exists()
-func ArrayKeyExists(key interface{}, m map[interface{}]interface{}) bool {
+func (PHP) ArrayKeyExists(key interface{}, m map[interface{}]interface{}) bool {
 	_, ok := m[key]
 	return ok
 }
 
 // ArrayCombine array_combine()
-func ArrayCombine(s1, s2 []interface{}) map[interface{}]interface{} {
+func (PHP) ArrayCombine(s1, s2 []interface{}) map[interface{}]interface{} {
 	if len(s1) != len(s2) {
 		panic("the number of elements for each slice isn't equal")
 	}
@@ -1280,7 +1282,7 @@ func ArrayCombine(s1, s2 []interface{}) map[interface{}]interface{} {
 }
 
 // ArrayReverse array_reverse()
-func ArrayReverse(s []interface{}) []interface{} {
+func (PHP) ArrayReverse(s []interface{}) []interface{} {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}
@@ -1288,7 +1290,7 @@ func ArrayReverse(s []interface{}) []interface{} {
 }
 
 // Implode implode()
-func Implode(glue string, pieces []string) string {
+func (PHP) Implode(glue string, pieces []string) string {
 	var buf bytes.Buffer
 	l := len(pieces)
 	for _, str := range pieces {
@@ -1302,7 +1304,7 @@ func Implode(glue string, pieces []string) string {
 
 // InArray in_array()
 // haystack supported types: slice, array or map
-func InArray(needle interface{}, haystack interface{}) bool {
+func (PHP) InArray(needle interface{}, haystack interface{}) bool {
 	val := reflect.ValueOf(haystack)
 	switch val.Kind() {
 	case reflect.Slice, reflect.Array:
@@ -1327,13 +1329,13 @@ func InArray(needle interface{}, haystack interface{}) bool {
 //////////// Mathematical Functions ////////////
 
 // Abs abs()
-func Abs(number float64) float64 {
+func (PHP) Abs(number float64) float64 {
 	return math.Abs(number)
 }
 
 // Rand rand()
 // Range: [0, 2147483647]
-func Rand(min, max int) int {
+func (PHP) Rand(min, max int) int {
 	if min > max {
 		panic("min: min cannot be greater than max")
 	}
@@ -1349,28 +1351,28 @@ func Rand(min, max int) int {
 }
 
 // Round round()
-func Round(value float64, precision int) float64 {
+func (PHP) Round(value float64, precision int) float64 {
 	p := math.Pow10(precision)
 	return math.Trunc((value+0.5/p)*p) / p
 }
 
 // Floor floor()
-func Floor(value float64) float64 {
+func (PHP) Floor(value float64) float64 {
 	return math.Floor(value)
 }
 
 // Ceil ceil()
-func Ceil(value float64) float64 {
+func (PHP) Ceil(value float64) float64 {
 	return math.Ceil(value)
 }
 
 // Pi pi()
-func Pi() float64 {
+func (PHP) Pi() float64 {
 	return math.Pi
 }
 
 // Max max()
-func Max(nums ...float64) float64 {
+func (PHP) Max(nums ...float64) float64 {
 	if len(nums) < 2 {
 		panic("nums: the nums length is less than 2")
 	}
@@ -1382,7 +1384,7 @@ func Max(nums ...float64) float64 {
 }
 
 // Min min()
-func Min(nums ...float64) float64 {
+func (PHP) Min(nums ...float64) float64 {
 	if len(nums) < 2 {
 		panic("nums: the nums length is less than 2")
 	}
@@ -1394,12 +1396,12 @@ func Min(nums ...float64) float64 {
 }
 
 // Decbin decbin()
-func Decbin(number int64) string {
+func (PHP) Decbin(number int64) string {
 	return strconv.FormatInt(number, 2)
 }
 
 // Bindec bindec()
-func Bindec(str string) (string, error) {
+func (PHP) Bindec(str string) (string, error) {
 	i, err := strconv.ParseInt(str, 2, 0)
 	if err != nil {
 		return "", err
@@ -1408,7 +1410,7 @@ func Bindec(str string) (string, error) {
 }
 
 // Hex2bin hex2bin()
-func Hex2bin(data string) (string, error) {
+func (PHP) Hex2bin(data string) (string, error) {
 	i, err := strconv.ParseInt(data, 16, 0)
 	if err != nil {
 		return "", err
@@ -1417,7 +1419,7 @@ func Hex2bin(data string) (string, error) {
 }
 
 // Bin2hex bin2hex()
-func Bin2hex(str string) (string, error) {
+func (PHP) Bin2hex(str string) (string, error) {
 	i, err := strconv.ParseInt(str, 2, 0)
 	if err != nil {
 		// If input is not binary number
@@ -1436,27 +1438,27 @@ func Bin2hex(str string) (string, error) {
 }
 
 // Dechex dechex()
-func Dechex(number int64) string {
+func (PHP) Dechex(number int64) string {
 	return strconv.FormatInt(number, 16)
 }
 
 // Hexdec hexdec()
-func Hexdec(str string) (int64, error) {
+func (PHP) Hexdec(str string) (int64, error) {
 	return strconv.ParseInt(str, 16, 0)
 }
 
 // Decoct decoct()
-func Decoct(number int64) string {
+func (PHP) Decoct(number int64) string {
 	return strconv.FormatInt(number, 8)
 }
 
 // Octdec Octdec()
-func Octdec(str string) (int64, error) {
+func (PHP) Octdec(str string) (int64, error) {
 	return strconv.ParseInt(str, 8, 0)
 }
 
 // BaseConvert base_convert()
-func BaseConvert(number string, frombase, tobase int) (string, error) {
+func (PHP) BaseConvert(number string, frombase, tobase int) (string, error) {
 	i, err := strconv.ParseInt(number, frombase, 0)
 	if err != nil {
 		return "", err
@@ -1465,14 +1467,14 @@ func BaseConvert(number string, frombase, tobase int) (string, error) {
 }
 
 // IsNan is_nan()
-func IsNan(val float64) bool {
+func (PHP) IsNan(val float64) bool {
 	return math.IsNaN(val)
 }
 
 //////////// CSPRNG Functions ////////////
 
 // RandomBytes random_bytes()
-func RandomBytes(length int) ([]byte, error) {
+func (PHP) RandomBytes(length int) ([]byte, error) {
 	bs := make([]byte, length)
 	_, err := crand.Read(bs)
 	if err != nil {
@@ -1483,7 +1485,7 @@ func RandomBytes(length int) ([]byte, error) {
 }
 
 // RandomInt random_int()
-func RandomInt(min, max int) (int, error) {
+func (PHP) RandomInt(min, max int) (int, error) {
 	if min > max {
 		panic("argument #1 must be less than or equal to argument #2")
 	}
@@ -1501,7 +1503,7 @@ func RandomInt(min, max int) (int, error) {
 //////////// Directory/Filesystem Functions ////////////
 
 // Stat stat()
-func Stat(filename string) (os.FileInfo, error) {
+func (PHP) Stat(filename string) (os.FileInfo, error) {
 	return os.Stat(filename)
 }
 
@@ -1509,7 +1511,7 @@ func Stat(filename string) (os.FileInfo, error) {
 // -1: all; 1: dirname; 2: basename; 4: extension; 8: filename
 // Usage:
 // Pathinfo("/home/go/path/src/php2go/php2go.go", 1|2|4|8)
-func Pathinfo(path string, options int) map[string]string {
+func (PHP) Pathinfo(path string, options int) map[string]string {
 	if options == -1 {
 		options = 1 | 2 | 4 | 8
 	}
@@ -1547,7 +1549,7 @@ func Pathinfo(path string, options int) map[string]string {
 }
 
 // FileExists file_exists()
-func FileExists(filename string) bool {
+func (PHP) FileExists(filename string) bool {
 	_, err := os.Stat(filename)
 	if err != nil && os.IsNotExist(err) {
 		return false
@@ -1556,7 +1558,7 @@ func FileExists(filename string) bool {
 }
 
 // IsFile is_file()
-func IsFile(filename string) bool {
+func (PHP) IsFile(filename string) bool {
 	fd, err := os.Stat(filename)
 	if err != nil && os.IsNotExist(err) {
 		return false
@@ -1565,7 +1567,7 @@ func IsFile(filename string) bool {
 }
 
 // IsDir is_dir()
-func IsDir(filename string) (bool, error) {
+func (PHP) IsDir(filename string) (bool, error) {
 	fd, err := os.Stat(filename)
 	if err != nil {
 		return false, err
@@ -1575,7 +1577,7 @@ func IsDir(filename string) (bool, error) {
 }
 
 // FileSize filesize()
-func FileSize(filename string) (int64, error) {
+func (PHP) FileSize(filename string) (int64, error) {
 	info, err := os.Stat(filename)
 	if err != nil && os.IsNotExist(err) {
 		return 0, err
@@ -1584,28 +1586,28 @@ func FileSize(filename string) (int64, error) {
 }
 
 // FilePutContents file_put_contents()
-func FilePutContents(filename string, data string, mode os.FileMode) error {
+func (PHP) FilePutContents(filename string, data string, mode os.FileMode) error {
 	return os.WriteFile(filename, []byte(data), mode)
 }
 
 // FileGetContents file_get_contents()
-func FileGetContents(filename string) (string, error) {
+func (PHP) FileGetContents(filename string) (string, error) {
 	data, err := os.ReadFile(filename)
 	return string(data), err
 }
 
 // Unlink unlink()
-func Unlink(filename string) error {
+func (PHP) Unlink(filename string) error {
 	return os.Remove(filename)
 }
 
 // Delete delete()
-func Delete(filename string) error {
+func (PHP) Delete(filename string) error {
 	return os.Remove(filename)
 }
 
 // Copy copy()
-func Copy(source, dest string) (bool, error) {
+func (PHP) Copy(source, dest string) (bool, error) {
 	fd1, err := os.Open(source)
 	if err != nil {
 		return false, err
@@ -1624,7 +1626,7 @@ func Copy(source, dest string) (bool, error) {
 }
 
 // IsReadable is_readable()
-func IsReadable(filename string) bool {
+func (PHP) IsReadable(filename string) bool {
 	fd, err := syscall.Open(filename, syscall.O_RDONLY, 0)
 	if err != nil {
 		return false
@@ -1634,7 +1636,7 @@ func IsReadable(filename string) bool {
 }
 
 // IsWriteable is_writeable()
-func IsWriteable(filename string) bool {
+func (PHP) IsWriteable(filename string) bool {
 	fd, err := syscall.Open(filename, syscall.O_WRONLY, 0)
 	if err != nil {
 		return false
@@ -1644,12 +1646,12 @@ func IsWriteable(filename string) bool {
 }
 
 // Rename rename()
-func Rename(oldname, newname string) error {
+func (PHP) Rename(oldname, newname string) error {
 	return os.Rename(oldname, newname)
 }
 
 // Touch touch()
-func Touch(filename string) (bool, error) {
+func (PHP) Touch(filename string) (bool, error) {
 	fd, err := os.OpenFile(filename, os.O_RDONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return false, err
@@ -1659,43 +1661,43 @@ func Touch(filename string) (bool, error) {
 }
 
 // Mkdir mkdir()
-func Mkdir(filename string, mode os.FileMode) error {
+func (PHP) Mkdir(filename string, mode os.FileMode) error {
 	return os.Mkdir(filename, mode)
 }
 
 // Getcwd getcwd()
-func Getcwd() (string, error) {
+func (PHP) Getcwd() (string, error) {
 	dir, err := os.Getwd()
 	return dir, err
 }
 
 // Realpath realpath()
-func Realpath(path string) (string, error) {
+func (PHP) Realpath(path string) (string, error) {
 	return filepath.Abs(path)
 }
 
 // Basename basename()
-func Basename(path string) string {
+func (PHP) Basename(path string) string {
 	return filepath.Base(path)
 }
 
 // Chmod chmod()
-func Chmod(filename string, mode os.FileMode) bool {
+func (PHP) Chmod(filename string, mode os.FileMode) bool {
 	return os.Chmod(filename, mode) == nil
 }
 
 // Chown chown()
-func Chown(filename string, uid, gid int) bool {
+func (PHP) Chown(filename string, uid, gid int) bool {
 	return os.Chown(filename, uid, gid) == nil
 }
 
 // Fclose fclose()
-func Fclose(handle *os.File) error {
+func (PHP) Fclose(handle *os.File) error {
 	return handle.Close()
 }
 
 // Filemtime filemtime()
-func Filemtime(filename string) (int64, error) {
+func (PHP) Filemtime(filename string) (int64, error) {
 	fd, err := os.Open(filename)
 	if err != nil {
 		return 0, err
@@ -1709,7 +1711,7 @@ func Filemtime(filename string) (int64, error) {
 }
 
 // Fgetcsv fgetcsv()
-func Fgetcsv(handle *os.File, length int, delimiter rune) ([][]string, error) {
+func (PHP) Fgetcsv(handle *os.File, length int, delimiter rune) ([][]string, error) {
 	reader := csv.NewReader(handle)
 	reader.Comma = delimiter
 	// TODO length limit
@@ -1717,14 +1719,14 @@ func Fgetcsv(handle *os.File, length int, delimiter rune) ([][]string, error) {
 }
 
 // Glob glob()
-func Glob(pattern string) ([]string, error) {
+func (PHP) Glob(pattern string) ([]string, error) {
 	return filepath.Glob(pattern)
 }
 
 //////////// Variable handling Functions ////////////
 
 // Empty empty()
-func Empty(val interface{}) bool {
+func (PHP) Empty(val interface{}) bool {
 	if val == nil {
 		return true
 	}
@@ -1753,7 +1755,7 @@ func Empty(val interface{}) bool {
 // Numeric strings consist of optional sign, any number of digits, optional decimal part and optional exponential part.
 // Thus +0123.45e6 is a valid numeric value.
 // In PHP hexadecimal (e.g. 0xf4c3b00c) is not supported, but IsNumeric is supported.
-func IsNumeric(val interface{}) bool {
+func (PHP) IsNumeric(val interface{}) bool {
 	switch val := val.(type) {
 	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
 		return true
@@ -1813,7 +1815,7 @@ func IsNumeric(val interface{}) bool {
 //
 //	"ls -a"
 //	"/bin/bash -c \"ls -a\""
-func Exec(command string, output *[]string, returnVar *int) string {
+func (PHP) Exec(command string, output *[]string, returnVar *int) string {
 	q := rune(0)
 	parts := strings.FieldsFunc(command, func(r rune) bool {
 		switch {
@@ -1853,7 +1855,7 @@ func Exec(command string, output *[]string, returnVar *int) string {
 // System system()
 // returnVar, 0: succ; 1: fail
 // Returns the last line of the command output on success, and "" on failure.
-func System(command string, returnVar *int) string {
+func (PHP) System(command string, returnVar *int) string {
 	*returnVar = 0
 	var stdBuf bytes.Buffer
 	var err, err1, err2, err3 error
@@ -1926,7 +1928,7 @@ func System(command string, returnVar *int) string {
 
 // Passthru passthru()
 // returnVar, 0: succ; 1: fail
-func Passthru(command string, returnVar *int) {
+func (PHP) Passthru(command string, returnVar *int) {
 	q := rune(0)
 	parts := strings.FieldsFunc(command, func(r rune) bool {
 		switch {
@@ -1964,13 +1966,13 @@ func Passthru(command string, returnVar *int) {
 //////////// Network Functions ////////////
 
 // Gethostname gethostname()
-func Gethostname() (string, error) {
+func (PHP) Gethostname() (string, error) {
 	return os.Hostname()
 }
 
 // Gethostbyname gethostbyname()
 // Get the IPv4 address corresponding to a given Internet host name
-func Gethostbyname(hostname string) (string, error) {
+func (PHP) Gethostbyname(hostname string) (string, error) {
 	ips, err := net.LookupIP(hostname)
 	if ips != nil {
 		for _, v := range ips {
@@ -1985,7 +1987,7 @@ func Gethostbyname(hostname string) (string, error) {
 
 // Gethostbynamel gethostbynamel()
 // Get a list of IPv4 addresses corresponding to a given Internet host name
-func Gethostbynamel(hostname string) ([]string, error) {
+func (PHP) Gethostbynamel(hostname string) ([]string, error) {
 	ips, err := net.LookupIP(hostname)
 	if ips != nil {
 		var ipstrs []string
@@ -2001,7 +2003,7 @@ func Gethostbynamel(hostname string) ([]string, error) {
 
 // Gethostbyaddr gethostbyaddr()
 // Get the Internet host name corresponding to a given IP address
-func Gethostbyaddr(ipAddress string) (string, error) {
+func (PHP) Gethostbyaddr(ipAddress string) (string, error) {
 	names, err := net.LookupAddr(ipAddress)
 	if names != nil {
 		return strings.TrimRight(names[0], "."), nil
@@ -2011,7 +2013,7 @@ func Gethostbyaddr(ipAddress string) (string, error) {
 
 // IP2long ip2long()
 // IPv4
-func IP2long(ipAddress string) uint32 {
+func (PHP) IP2long(ipAddress string) uint32 {
 	ip := net.ParseIP(ipAddress)
 	if ip == nil {
 		return 0
@@ -2021,7 +2023,7 @@ func IP2long(ipAddress string) uint32 {
 
 // Long2ip long2ip()
 // IPv4
-func Long2ip(properAddress uint32) string {
+func (PHP) Long2ip(properAddress uint32) string {
 	ipByte := make([]byte, 4)
 	binary.BigEndian.PutUint32(ipByte, properAddress)
 	ip := net.IP(ipByte)
@@ -2031,34 +2033,34 @@ func Long2ip(properAddress uint32) string {
 //////////// Misc. Functions ////////////
 
 // Echo echo
-func Echo(args ...interface{}) {
+func (PHP) Echo(args ...interface{}) {
 	fmt.Print(args...)
 }
 
 // Uniqid uniqid()
-func Uniqid(prefix string) string {
+func (PHP) Uniqid(prefix string) string {
 	now := time.Now()
 	return fmt.Sprintf("%s%08x%05x", prefix, now.Unix(), now.UnixNano()%0x100000)
 }
 
 // Exit exit()
-func Exit(status int) {
+func (PHP) Exit(status int) {
 	os.Exit(status)
 }
 
 // Die die()
-func Die(status int) {
+func (PHP) Die(status int) {
 	os.Exit(status)
 }
 
 // Getenv getenv()
-func Getenv(varname string) string {
+func (PHP) Getenv(varname string) string {
 	return os.Getenv(varname)
 }
 
 // Putenv putenv()
 // The setting, like "FOO=BAR"
-func Putenv(setting string) error {
+func (PHP) Putenv(setting string) error {
 	s := strings.Split(setting, "=")
 	if len(s) != 2 {
 		panic("setting: invalid")
@@ -2068,7 +2070,7 @@ func Putenv(setting string) error {
 
 // MemoryGetUsage memory_get_usage()
 // return in bytes
-func MemoryGetUsage(realUsage bool) uint64 {
+func (PHP) MemoryGetUsage(realUsage bool) uint64 {
 	stat := new(runtime.MemStats)
 	runtime.ReadMemStats(stat)
 	return stat.Alloc
@@ -2076,7 +2078,7 @@ func MemoryGetUsage(realUsage bool) uint64 {
 
 // MemoryGetPeakUsage memory_get_peak_usage()
 // return in bytes
-func MemoryGetPeakUsage(realUsage bool) uint64 {
+func (PHP) MemoryGetPeakUsage(realUsage bool) uint64 {
 	stat := new(runtime.MemStats)
 	runtime.ReadMemStats(stat)
 	return stat.TotalAlloc
@@ -2090,7 +2092,7 @@ func MemoryGetPeakUsage(realUsage bool) uint64 {
 // VersionCompare("1.2.3-alpha", "1.2.3RC7", '>=')
 // VersionCompare("1.2.3-beta", "1.2.3pl", 'lt')
 // VersionCompare("1.1_dev", "1.2any", 'eq')
-func VersionCompare(version1, version2, operator string) bool {
+func (PHP) VersionCompare(version1, version2, operator string) bool {
 	var vcompare func(string, string) int
 	var canonicalize func(string) string
 	var special func(string, string) int
@@ -2288,12 +2290,12 @@ func VersionCompare(version1, version2, operator string) bool {
 }
 
 // ZipOpen zip_open()
-func ZipOpen(filename string) (*zip.ReadCloser, error) {
+func (PHP) ZipOpen(filename string) (*zip.ReadCloser, error) {
 	return zip.OpenReader(filename)
 }
 
 // Pack pack()
-func Pack(order binary.ByteOrder, data interface{}) (string, error) {
+func (PHP) Pack(order binary.ByteOrder, data interface{}) (string, error) {
 	buf := new(bytes.Buffer)
 	err := binary.Write(buf, order, data)
 	if err != nil {
@@ -2304,7 +2306,7 @@ func Pack(order binary.ByteOrder, data interface{}) (string, error) {
 }
 
 // Unpack unpack()
-func Unpack(order binary.ByteOrder, data string) (interface{}, error) {
+func (PHP) Unpack(order binary.ByteOrder, data string) (interface{}, error) {
 	var result []byte
 	r := bytes.NewReader([]byte(data))
 	err := binary.Read(r, order, &result)
@@ -2317,7 +2319,7 @@ func Unpack(order binary.ByteOrder, data string) (interface{}, error) {
 
 // Ternary Ternary expression
 // max := Ternary(a > b, a, b).(int)
-func Ternary(condition bool, trueVal, falseVal interface{}) interface{} {
+func (PHP) Ternary(condition bool, trueVal, falseVal interface{}) interface{} {
 	if condition {
 		return trueVal
 	}
